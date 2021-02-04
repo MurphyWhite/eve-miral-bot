@@ -6,6 +6,17 @@ plugins {
     id("net.mamoe.mirai-console") version "2.0-RC" // mirai-console version
 }
 
+repositories {
+    mavenLocal()
+    mavenCentral()
+    jcenter()
+    maven(url = "https://jitpack.io/")
+}
+
+dependencies {
+    implementation("khttp:khttp:1.0.0")
+}
+
 mirai {
     coreVersion = "2.0-RC" // mirai-core version
 
@@ -21,8 +32,5 @@ kotlin.sourceSets.all { languageSettings.useExperimentalAnnotation("kotlin.Requi
 group = "org.example"
 version = "0.1.0"
 
-repositories {
-    mavenLocal()
-    mavenCentral()
-    jcenter()
-}
+buildscript
+
