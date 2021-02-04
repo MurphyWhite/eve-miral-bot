@@ -4,7 +4,7 @@ import net.mamoe.mirai.console.command.CommandManager.INSTANCE.register
 import net.mamoe.mirai.console.command.CommandManager.INSTANCE.unregister
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescription
 import net.mamoe.mirai.console.plugin.jvm.KotlinPlugin
-import rocks.ditto.miral.eve_plugin.command.JitaBuyCommand
+import rocks.ditto.miral.eve_plugin.command.JitaCommand
 
 object PluginMain : KotlinPlugin(
     JvmPluginDescription("rocks.ditto.my-plugin", "1.0")
@@ -12,10 +12,10 @@ object PluginMain : KotlinPlugin(
 
     override fun onEnable() {
         PluginMain.logger.info("eve plugin load ")
-        JitaBuyCommand.register()
+        JitaCommand.register()
     }
 
     override fun onDisable() {
-        JitaBuyCommand.unregister();
+        JitaCommand.unregister();
     }
 }
