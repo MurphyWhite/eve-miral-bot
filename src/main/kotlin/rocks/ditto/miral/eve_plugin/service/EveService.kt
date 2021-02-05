@@ -21,8 +21,8 @@ object EveService {
             val jitaBuyOrder = fetchOrder(id, "buy")
             val jitaSellOrder = fetchOrder(id, "sell")
             var jita = "$name\n" +
-                "jitaBuy: $jitaBuyOrder\n" +
-                "jitaSell: $jitaSellOrder"
+                "jitaSell: $jitaSellOrder\n" +
+                "jitaBuy: $jitaBuyOrder\n"
             return jita
         }catch (e: Exception){
             return e.message.toString()
