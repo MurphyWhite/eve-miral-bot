@@ -1,5 +1,7 @@
 package rocks.ditto.miral.eve_plugin.service
 
+import net.mamoe.mirai.console.MiraiConsole
+import net.mamoe.mirai.utils.MiraiLogger
 import org.json.JSONObject
 import java.text.DecimalFormat
 import khttp.get as httpGet
@@ -8,26 +10,33 @@ object EveService {
 
     private val MONEY_DEC = DecimalFormat("#,###.00")
 
+    private val logger: MiraiLogger = MiraiConsole.createLogger(EveService.javaClass.name)
+
     fun fetchJita(name: String): String {
-        if (name == "") {
-            return "请输入物品名字"
+        try {
+            if (name == "") {
+                return "请输入物品名字"
+            }
+            var id = fetchTypId(name)
+            val jitaBuyOrder = fetchOrder(id, "buy")
+            val jitaSellOrder = fetchOrder(id, "sell")
+            var jita = "$name\n" +
+                "jitaBuy: $jitaBuyOrder\n" +
+                "jitaSell: $jitaSellOrder"
+            return jita
+        }catch (e: Exception){
+            return e.message.toString()
         }
-        var id = fetchTypId(name)
-        val jitaBuyOrder =  fetchOrder(id, "buy")
-        val jitaSellOrder = fetchOrder(id, "sell")
-        var jita = "$name\n" +
-            "jitaBuy: $jitaBuyOrder\n" +
-            "jitaSell: $jitaSellOrder"
-        return jita
     }
 
     fun fetchTypId(propertyName: String): Int {
         var response = khttp.get("https://www.fuzzwork.co.uk/api/typeid.php?typename=$propertyName")
         var id = response.jsonObject.get("typeID")
-        if (id !is Int) {
+        val typeName = response.jsonObject.get("typeName")
+        if (id == 0 || typeName.equals("bad item")) {
             throw Exception("没有找到该物品:$propertyName")
         }
-        return id
+        return id as Int
     }
 
     fun fetchOrder(typeId: Int, orderType: String): String {
