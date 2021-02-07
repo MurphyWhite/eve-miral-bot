@@ -5,10 +5,14 @@ import net.mamoe.mirai.utils.MiraiLogger
 import org.json.JSONObject
 import java.text.DecimalFormat
 import khttp.get as httpGet
+import com.google.gson.Gson
+import rocks.ditto.miral.eve_plugin.entity.EveOrderVO
 
 object EveService {
 
     private val MONEY_DEC = DecimalFormat("#,###.00")
+
+    private val gson = Gson()
 
     private val logger: MiraiLogger = MiraiConsole.createLogger(EveService.javaClass.name)
 
@@ -24,7 +28,7 @@ object EveService {
                 "jitaSell: $jitaSellOrder\n" +
                 "jitaBuy: $jitaBuyOrder\n"
             return jita
-        }catch (e: Exception){
+        } catch (e: Exception) {
             return e.message.toString()
         }
     }
@@ -39,6 +43,10 @@ object EveService {
         return id as Int
     }
 
+//    fun fetchTypeId(propertyName: String): String {
+//
+//    }
+
     fun fetchOrder(typeId: Int, orderType: String): String {
         var response = httpGet(
             "https://esi.evetech.net/dev/markets/10000002/orders/?" +
@@ -49,14 +57,22 @@ object EveService {
         )
         if (response.statusCode == 200) {
             var orders = response.jsonArray
+            var orderVOs: ArrayList<EveOrderVO> = ArrayList()
             for (order in orders) {
                 if (order is JSONObject) {
                     println(order)
+                    var orderVO = gson.fromJson(order.toString(), EveOrderVO::class.javaObjectType)
                     var price = MONEY_DEC.format(order.get("price"))
                     var amount = order.get("volume_remain")
-                    return "price: $price amount: $amount"
+                    orderVOs.add(orderVO)
                 }
             }
+            orderVOs.sort()
+            if ("buy".equals(orderType)){
+                orderVOs.reverse()
+            }
+            var first = orderVOs.get(0)
+            return "price: ${MONEY_DEC.format(first.price)}"
         }
         return ""
     }
