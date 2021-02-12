@@ -31,7 +31,7 @@ object JitaCommand : RawCommand(
 
     override suspend fun CommandSender.onCommand(args: MessageChain) {
         var text = args.joinToString(" ")
-        var msg = EveService.fetchJita(text)
+        var msg = EveService.fetchJitaNew(text)
         sendMessage(msg)
     }
 }
