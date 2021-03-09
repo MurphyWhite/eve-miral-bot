@@ -8,6 +8,9 @@ import khttp.get as httpGet
 import com.google.gson.Gson
 import rocks.ditto.miral.eve_plugin.entity.EveOrderVO
 
+/**
+ * eve市场实例
+ */
 object EveService {
 
     private val MONEY_DEC = DecimalFormat("#,###.00")
@@ -109,8 +112,12 @@ object EveService {
             if ("buy".equals(orderType)){
                 orderVOs.reverse()
             }
-            var first = orderVOs.get(0)
-            return "price: ${MONEY_DEC.format(first.price)}"
+            if (orderVOs.size == 0){
+                return "no orders"
+            } else {
+                var first = orderVOs.get(0)
+                return "price: ${MONEY_DEC.format(first.price)}"
+            }
         }
         return ""
     }
