@@ -45,10 +45,10 @@ object EveService {
             if (inv !is JSONObject) {
                 return "找不到该物品！"
             }
-            var id = inv?.get("id")
+            var id = inv?.get("id") as Int
             var name = inv?.get("name")
-            val jitaBuyOrder = fetchOrder(id as Int, "buy")
-            val jitaSellOrder = fetchOrder(id as Int, "sell")
+            val jitaBuyOrder = fetchOrder(id, "buy")
+            val jitaSellOrder = fetchOrder(id, "sell")
             var jita = "$name\n" +
                 "jitaSell: $jitaSellOrder\n" +
                 "jitaBuy: $jitaBuyOrder\n"
@@ -120,5 +120,46 @@ object EveService {
             }
         }
         return ""
+    }
+
+    fun fetchPrice(typeId: Int, orderType: String): Int {
+        var response = httpGet(
+            "https://esi.evetech.net/dev/markets/10000002/orders/?" +
+                "datasource=tranquility" +
+                "&order_type=$orderType" +
+                "&page=1" +
+                "&type_id=$typeId"
+        )
+        if (response.statusCode == 200) {
+            var orders = response.jsonArray
+            var orderVOs: ArrayList<EveOrderVO> = ArrayList()
+            for (order in orders) {
+                if (order is JSONObject) {
+                    println(order)
+                    var orderVO = gson.fromJson(order.toString(), EveOrderVO::class.javaObjectType)
+                    var price = MONEY_DEC.format(order.get("price"))
+                    var amount = order.get("volume_remain")
+                    orderVOs.add(orderVO)
+                }
+            }
+            orderVOs.sort()
+            if ("buy".equals(orderType)){
+                orderVOs.reverse()
+            }
+            if (orderVOs.size == 0){
+                return 0
+            } else {
+                var first = orderVOs.get(0)
+                return first.price as Int
+            }
+        }
+        return 0
+    }
+
+    fun fetchPlexPrice(): String {
+        var plexId = 44992
+        fetchOrder(plexId, "buy")
+        fetchOrder(plexId, "sell")
+        return "Plex: "
     }
 }

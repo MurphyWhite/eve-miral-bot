@@ -3,14 +3,17 @@ plugins {
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.serialization") version kotlinVersion
 
-    id("net.mamoe.mirai-console") version "2.0-RC" // mirai-console version
+    id("net.mamoe.mirai-console") version "2.6.4" // mirai-console version
 }
 
-repositories {
-    mavenLocal()
-    mavenCentral()
-    jcenter()
-    maven(url = "https://jitpack.io/")
+mirai {
+    coreVersion = "2.6-RC" // mirai-core version
+
+    publishing {
+        repo = "mirai"
+        packageName = "eve-bot-plugin"
+        override = true
+    }
 }
 
 dependencies {
@@ -18,20 +21,14 @@ dependencies {
     implementation("com.google.code.gson:gson:2.8.5")
 }
 
-mirai {
-    coreVersion = "2.0-RC" // mirai-core version
-
-    publishing {
-        repo = "mirai"
-        packageName = "mirai-console-example-plugin"
-        override = true
-    }
-}
-
 kotlin.sourceSets.all { languageSettings.useExperimentalAnnotation("kotlin.RequiresOptIn") }
 
-group = "org.example"
-version = "0.1.0"
+group = "rocks.ditto"
+version = "0.1.1"
 
-buildscript
-
+repositories {
+    mavenLocal()
+    mavenCentral()
+    jcenter()
+    maven("https://dl.bintray.com/kotlin/kotlin-eap")
+}
