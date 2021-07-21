@@ -1,12 +1,11 @@
 package org.example.mirai.plugin
 
-import net.mamoe.mirai.alsoLogin
 import net.mamoe.mirai.console.MiraiConsole
 import net.mamoe.mirai.console.plugin.PluginManager.INSTANCE.enable
 import net.mamoe.mirai.console.plugin.PluginManager.INSTANCE.load
 import net.mamoe.mirai.console.terminal.MiraiConsoleTerminalLoader
 import net.mamoe.mirai.console.util.ConsoleExperimentalApi
-import rocks.ditto.miral.eve_plugin.rocks.ditto.miral.eve_plugin.PluginMain
+import rocks.ditto.miral.eve_plugin.PluginMain
 
 @ConsoleExperimentalApi
 suspend fun main() {

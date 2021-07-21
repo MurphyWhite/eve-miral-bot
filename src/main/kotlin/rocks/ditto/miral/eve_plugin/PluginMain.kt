@@ -1,4 +1,4 @@
-package rocks.ditto.miral.eve_plugin.rocks.ditto.miral.eve_plugin;
+package rocks.ditto.miral.eve_plugin;
 
 import net.mamoe.mirai.console.command.CommandManager.INSTANCE.register
 import net.mamoe.mirai.console.command.CommandManager.INSTANCE.unregister
