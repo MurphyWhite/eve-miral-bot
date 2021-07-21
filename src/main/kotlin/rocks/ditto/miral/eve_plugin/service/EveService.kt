@@ -6,7 +6,10 @@ import org.json.JSONObject
 import java.text.DecimalFormat
 import khttp.get as httpGet
 import com.google.gson.Gson
+import khttp.responses.Response
 import rocks.ditto.miral.eve_plugin.entity.EveOrderVO
+import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * eve市场实例
@@ -71,17 +74,18 @@ object EveService {
     // eve marketer
     // https://evemarketer.com/api/v1/types/search?q=%E4%B9%8C%E9%B8%A6&language=zh&important_names=false
     fun fetchInv(propertyName: String): JSONObject? {
-        var headers = mapOf("user-agent" to "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36",
+        var headers = mapOf(
+            "user-agent" to "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36",
             "accept" to "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
             "accept-language" to "zh-CN,zh;q=0.9,en-GB;q=0.8,en;q=0.7,zh-HK;q=0.6,zh-TW;q=0.5"
         )
-        var response = khttp.get("https://evemarketer.com/api/v1/types/search?q=$propertyName",headers = headers)
-        if (response.statusCode == 200){
+        var response = khttp.get("https://evemarketer.com/api/v1/types/search?q=$propertyName", headers = headers)
+        if (response.statusCode == 200) {
             var invs = response.jsonArray
-            for (inv in invs){
+            for (inv in invs) {
                 print(inv)
                 if (inv is JSONObject) {
-                    return  inv
+                    return inv
                 }
             }
         }
@@ -109,10 +113,7 @@ object EveService {
                 }
             }
             orderVOs.sort()
-            if ("buy".equals(orderType)){
-                orderVOs.reverse()
-            }
-            if (orderVOs.size == 0){
+            if (orderVOs.size == 0) {
                 return "no orders"
             } else {
                 var first = orderVOs.get(0)
@@ -143,10 +144,10 @@ object EveService {
                 }
             }
             orderVOs.sort()
-            if ("buy".equals(orderType)){
+            if ("buy".equals(orderType)) {
                 orderVOs.reverse()
             }
-            if (orderVOs.size == 0){
+            if (orderVOs.size == 0) {
                 return 0
             } else {
                 var first = orderVOs.get(0)
@@ -156,10 +157,54 @@ object EveService {
         return 0
     }
 
+
     fun fetchPlexPrice(): String {
         var plexId = 44992
-        fetchOrder(plexId, "buy")
-        fetchOrder(plexId, "sell")
-        return "Plex: "
+        var response = httpGet(
+            "https://esi.evetech.net/dev/markets/10000002/orders/?" +
+                "datasource=tranquility" +
+                "&page=1" +
+                "&type_id=$plexId"
+        )
+        var orders = processOrder(response)
+        var sellOrders = orders.filter { !it.isBuyOrder }
+        var buyOrders = orders.filter { it.isBuyOrder }
+
+
+        var sell = 0
+        if (sellOrders.size > 0) {
+            Collections.sort(sellOrders)
+            sell = sellOrders[0].price.toInt()
+        }
+        var buy = 0
+        if (buyOrders.size > 0) {
+            Collections.sort(buyOrders)
+            buy = buyOrders[0].price.toInt()
+        }
+
+        return "Plex\n" +
+            "jitaSell: "+ MONEY_DEC.format(sell)+ "\n" +
+            "jitaBuy: "+ MONEY_DEC.format(buy)+ "\n" +
+            "500 Plex\n" +
+            "jitaSell: " + MONEY_DEC.format(500 * sell) + "\n" +
+            "jitaSell: " + MONEY_DEC.format(500 * sell) + "\n"
     }
+
+    fun processOrder(response: Response): List<EveOrderVO> {
+        if (response.statusCode == 200) {
+            var orders = response.jsonArray
+            var orderVOs: ArrayList<EveOrderVO> = ArrayList()
+            for (order in orders) {
+                if (order is JSONObject) {
+                    println(order)
+                    var orderVO = gson.fromJson(order.toString(), EveOrderVO::class.javaObjectType)
+                    orderVOs.add(orderVO)
+                }
+            }
+            return orderVOs
+        }
+        throw Exception("Fetch order failed!")
+    }
+
+
 }

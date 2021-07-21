@@ -1,15 +1,26 @@
 package rocks.ditto.miral.eve_plugin.entity
 
+import com.google.gson.annotations.SerializedName
 import java.math.BigDecimal
-import java.text.DecimalFormat
 import java.util.*
 
 class EveOrderVO(
-    val orderId: BigDecimal, val typeId: String, val price: BigDecimal,
-    val minVolume: Int, val volumeTotal: Int, val volumeRemain: Int,
+    @SerializedName("order_id")
+    val orderId: BigDecimal,
+    @SerializedName("type_id")
+    val typeId: String,
+    val price: BigDecimal,
+    @SerializedName("min_volume")
+    val minVolume: Int,
+    @SerializedName("volume_total")
+    val volumeTotal: Int,
+    @SerializedName("volume_remain")
+    val volumeRemain: Int,
     val systemId: BigDecimal, val locationId: Int,
     val range: String, val duration: Int,
-    val issued: Date, val isBuyOrder: Boolean
+    val issued: Date,
+    @SerializedName("is_buy_order")
+    val isBuyOrder: Boolean
 ) : Comparable<EveOrderVO> {
 
     /**
