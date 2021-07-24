@@ -24,7 +24,7 @@ dependencies {
 kotlin.sourceSets.all { languageSettings.useExperimentalAnnotation("kotlin.RequiresOptIn") }
 
 group = "rocks.ditto"
-version = "0.1.1"
+version = "0.1.2"
 
 repositories {
     mavenLocal()

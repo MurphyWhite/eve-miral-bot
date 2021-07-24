@@ -187,7 +187,7 @@ object EveService {
             "jitaBuy: "+ MONEY_DEC.format(buy)+ "\n" +
             "500 Plex\n" +
             "jitaSell: " + MONEY_DEC.format(500 * sell) + "\n" +
-            "jitaSell: " + MONEY_DEC.format(500 * sell) + "\n"
+            "jitaBuy: " + MONEY_DEC.format(500 * buy) + "\n"
     }
 
     fun processOrder(response: Response): List<EveOrderVO> {
