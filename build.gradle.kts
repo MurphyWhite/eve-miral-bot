@@ -1,9 +1,9 @@
 plugins {
-    val kotlinVersion = "1.4.20"
+    val kotlinVersion = "1.6.10"
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.serialization") version kotlinVersion
 
-    id("net.mamoe.mirai-console") version "2.6.4" // mirai-console version
+    id("net.mamoe.mirai-console") version "2.11.1"
 }
 
 mirai {
@@ -24,11 +24,9 @@ dependencies {
 kotlin.sourceSets.all { languageSettings.useExperimentalAnnotation("kotlin.RequiresOptIn") }
 
 group = "rocks.ditto"
-version = "0.1.2"
+version = "0.1.3"
 
 repositories {
-    mavenLocal()
+    maven("https://maven.aliyun.com/repository/public") // 阿里云国内代理仓库
     mavenCentral()
-    jcenter()
-    maven("https://dl.bintray.com/kotlin/kotlin-eap")
 }
