@@ -8,5 +8,5 @@ fun main() {
 
 fun testFetchOrder(){
     println(EveService.fetchPlexPrice())
-    println(EveService.fetchJita("raven"))
+    println(EveService.fetchJita("Paladin"))
 }

@@ -1,13 +1,12 @@
 package rocks.ditto.miral.eve_plugin.service
 
-import net.mamoe.mirai.console.MiraiConsole
-import net.mamoe.mirai.utils.MiraiLogger
 import org.json.JSONObject
 import java.text.DecimalFormat
 import khttp.get as httpGet
 import com.google.gson.Gson
 import khttp.responses.Response
 import rocks.ditto.miral.eve_plugin.entity.EveOrderVO
+import java.math.BigDecimal
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -19,8 +18,6 @@ object EveService {
     private val MONEY_DEC = DecimalFormat("#,###.00")
 
     private val gson = Gson()
-
-    private val logger: MiraiLogger = MiraiConsole.createLogger(EveService.javaClass.name)
 
     fun fetchJita(name: String): String {
         try {
@@ -171,23 +168,23 @@ object EveService {
         var buyOrders = orders.filter { it.isBuyOrder }
 
 
-        var sell = 0
+        var sell = BigDecimal.ZERO
         if (sellOrders.size > 0) {
             Collections.sort(sellOrders)
-            sell = sellOrders[0].price.toInt()
+            sell = sellOrders[0].price
         }
-        var buy = 0
+        var buy = BigDecimal.ZERO
         if (buyOrders.size > 0) {
             Collections.sort(buyOrders)
-            buy = buyOrders[0].price.toInt()
+            buy = buyOrders[0].price
         }
 
         return "Plex\n" +
             "jitaSell: "+ MONEY_DEC.format(sell)+ "\n" +
             "jitaBuy: "+ MONEY_DEC.format(buy)+ "\n" +
             "500 Plex\n" +
-            "jitaSell: " + MONEY_DEC.format(500 * sell) + "\n" +
-            "jitaBuy: " + MONEY_DEC.format(500 * buy) + "\n"
+            "jitaSell: " + MONEY_DEC.format(sell.multiply(BigDecimal.valueOf(500))) + "\n" +
+            "jitaBuy: " + MONEY_DEC.format(sell.multiply(BigDecimal.valueOf(500))) + "\n"
     }
 
     fun processOrder(response: Response): List<EveOrderVO> {

@@ -18,13 +18,6 @@ object JitaCommand : RawCommand(
     "j",
     description = "jita"
 ) {
-    private val logger: MiraiLogger = MiraiConsole.createLogger(this.javaClass.name)
-
-    suspend fun CommandSender.handle(msg:String) {
-        var msg = EveService.fetchJita(msg)
-        sendMessage(msg)
-    }
-
     override suspend fun CommandSender.onCommand(args: MessageChain) {
         var text = args.joinToString(" ")
         var msg = EveService.fetchJitaNew(text)
